@@ -1,0 +1,14 @@
+/.gradle
+/build
+/app/build
+/local.properties
+*.iml
+/.idea
+/captures
+.fuse_hidden*
+.DS_Store
+.kotlin/
+
+# Bike photos are Hero MotoCorp's official renders: not ours to publish. The app shows a bike symbol
+# when they're missing; see README "Bike photos".
+/app/src/main/res/drawable-nodpi/bike_*.webp
