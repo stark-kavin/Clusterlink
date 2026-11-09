@@ -52,7 +52,20 @@ Hero bikes with a Bluetooth TFT dashboard. Built-in models: **Karizma XMR 210**,
 **Xtreme 250R**. Developed on a Karizma XMR CE; connection and music are confirmed on the bike, the rest is
 not yet tested on it.
 
-## Build and install
+## Install
+
+1. Download the latest `clusterlink-x.y.z.apk` from [Releases](https://github.com/stark-kavin/Clusterlink/releases/latest)
+   and open it. Allow your browser or file manager to install apps when asked.
+2. If **Play Protect** warns about an unknown app, tap **More details → Install anyway**.
+3. Open **Settings → Apps → Clusterlink → ⋮ → Allow restricted settings**. Android blocks notification
+   access and SMS for apps installed outside the Play Store until you do this.
+4. Open Clusterlink and allow the permissions it asks for, then turn on **Notification access** in
+   **Settings → Connection**.
+5. Switch the bike's ignition on, tap **Add your vehicle**, pick your model and colour, then your bike.
+
+Updates install from inside the app: tap **Update** when it says a new version is available.
+
+## Build from source
 
 Needs JDK 17–21, Android SDK 34 and Gradle 8.9 (or Android Studio). Runs on Android 8.0+.
 
