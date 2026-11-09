@@ -33,8 +33,12 @@ class MainActivity : ComponentActivity() {
                         startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
                     }
                 )
+                // Shown over any screen when GitHub has a newer release.
+                com.clusterlink.app.ui.UpdateDialog()
             }
         }
+        // Look for a new release on GitHub (at most every 6 hours, only when online).
+        com.clusterlink.app.core.Updater.checkIfDue(this)
     }
 
     override fun onResume() {

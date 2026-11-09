@@ -68,6 +68,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.clusterlink.app.core.AppSettings
+import com.clusterlink.app.core.Updater
+import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
@@ -226,6 +228,7 @@ fun SettingsScreen(
                             }
                             item {
                                 Section("More") {
+                                    UpdatesRow()
                                     ActionRow(Icons.Rounded.Science, "Test bench", "Send test screens to the bike and see the packet log",
                                         tint = Vl.Cyan, trailing = null, onClick = onOpenTestBench)
                                     ActionRow(Icons.Rounded.Info, "About Clusterlink", "Version, supported bikes, credits and licences",
@@ -800,3 +803,29 @@ fun requestBatteryExemption(ctx: Context) {
 
 private fun isListenerOn(ctx: Context): Boolean =
     Settings.Secure.getString(ctx.contentResolver, "enabled_notification_listeners")?.contains(ctx.packageName) == true
+
+// ---------------------------------------------------------------- updates
+
+/** Settings → More → App updates: current version and update state; tap to check GitHub or open the update. */
+@Composable
+private fun UpdatesRow() {
+    val ctx = LocalContext.current
+    val state by Updater.state.collectAsStateWithLifecycle()
+    val version = remember { Updater.installedVersion(ctx) }
+    val (subtitle, available) = when (val s = state) {
+        is Updater.State.Checking -> "Checking GitHub…" to false
+        is Updater.State.UpToDate -> "Version $version · Up to date" to false
+        is Updater.State.Available -> "Version ${s.release.version} is available" to true
+        is Updater.State.Downloading -> "Downloading… ${if (s.total > 0) s.bytes * 100 / s.total else 0}%" to true
+        is Updater.State.Installing -> "Installing…" to true
+        is Updater.State.NeedsPermission -> "Needs one permission to install" to true
+        is Updater.State.Failed -> s.message to (s.release != null)
+        else -> "Version $version · Tap to check" to false
+    }
+    ActionRow(
+        Icons.Rounded.SystemUpdate, "App updates", subtitle,
+        tint = if (available) Vl.Volt else Vl.TextDim,
+        trailing = if (state is Updater.State.Available) "Update" else null,
+        onClick = { if (available) Updater.showDialog() else Updater.check(ctx, manual = true) },
+    )
+}

@@ -6,12 +6,16 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-// Read MAPS_API_KEY from local.properties (never commit it)
-val mapsApiKey: String = run {
-    val p = Properties()
+// local.properties is never committed: MAPS_API_KEY, and CLUSTERLINK_SIGNING = path to the release
+// signing.properties (storeFile, storePassword, keyAlias, keyPassword), kept outside the repo.
+val localProps = Properties().apply {
     val f = rootProject.file("local.properties")
-    if (f.exists()) f.inputStream().use { p.load(it) }
-    p.getProperty("MAPS_API_KEY", "")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+val mapsApiKey: String = localProps.getProperty("MAPS_API_KEY", "")
+val signingProps: Properties? = localProps.getProperty("CLUSTERLINK_SIGNING")?.let { path ->
+    val f = file(path)
+    if (f.exists()) Properties().apply { f.inputStream().use { load(it) } } else null
 }
 
 android {
@@ -22,14 +26,29 @@ android {
         applicationId = "com.clusterlink.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "0.1.1"
         manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
     }
+    signingConfigs {
+        if (signingProps != null) create("clusterlink") {
+            storeFile = file(signingProps.getProperty("storeFile"))
+            storePassword = signingProps.getProperty("storePassword")
+            keyAlias = signingProps.getProperty("keyAlias")
+            keyPassword = signingProps.getProperty("keyPassword")
+        }
+    }
     buildTypes {
+        // With the release key available, every build is signed with it, so any build can update an
+        // installed app (including the in-app updater installing GitHub releases). Without it: debug key.
+        val key = signingConfigs.findByName("clusterlink")
+        debug {
+            if (key != null) signingConfig = key
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (key != null) signingConfig = key
         }
     }
     compileOptions {
@@ -55,5 +74,7 @@ dependencies {
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
+    // Maps pulls in an old Fragment; activity-result APIs need 1.3.0+ (release lint check).
+    implementation("androidx.fragment:fragment:1.8.5")
     debugImplementation(libs.androidx.ui.tooling)
 }

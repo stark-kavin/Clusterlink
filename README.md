@@ -43,6 +43,7 @@ dashboard of **Hero motorcycles**. No account, no cloud, no analytics.
 - **Your bike's colours**: pick your model and colour edition and the app matches it, or choose a preset
   or your own colours.
 - **Auto-reconnect** when the bike powers on, plus a Quick Settings tile.
+- **Updates itself** from this repo's GitHub releases.
 - **Test bench** to try every screen on the bike without a real call, song or route.
 
 ## Supported bikes
@@ -65,9 +66,9 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 ## Bike photos
 
-The bike photos are Hero's images and aren't included; the app shows a bike symbol instead. To add them,
-put WebP files in `app/src/main/res/drawable-nodpi/` with the names listed in `core/BikeModel.kt`
-(for example `bike_xpulse_210_blue.webp`).
+The bike photos are Hero's images. Release APKs include them; the source code doesn't, so a build from
+source shows a bike symbol instead. To add them, put WebP files in `app/src/main/res/drawable-nodpi/` with
+the names listed in `core/BikeModel.kt` (for example `bike_xpulse_210_blue.webp`).
 
 ## Permissions
 

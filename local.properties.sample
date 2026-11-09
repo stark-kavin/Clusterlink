@@ -1,3 +1,5 @@
 # Copy to local.properties and fill in. Do NOT commit the real file.
 # sdk.dir is written automatically by Android Studio.
 MAPS_API_KEY=YOUR_ANDROID_MAPS_SDK_KEY
+# Optional: release signing (storeFile, storePassword, keyAlias, keyPassword), kept outside the repo.
+# CLUSTERLINK_SIGNING=/path/to/signing.properties
